@@ -4,6 +4,73 @@ const TelegramBot = require('node-telegram-bot-api')
 const token = process.env.TOKEN
 const bot = new TelegramBot(token, {polling: true})
 
+class User {
+    public id: string | number;
+    public name: string;
+    public username: string;
+    public state: string = null;
+
+    constructor(id, name, username) {
+        this.id = id
+        this.name = name
+        this.username = username;
+    }
+}
+
+const userList: Array<User> = [];
+
+const findUser = (id) => {
+    for (let i = 0; i < userList.length; i++) {
+        if (userList[i].id === id) return i
+    }
+    return undefined;
+}
+
+bot.on("text", (msg) => {
+    !findUser(msg.from.id) && userList.push(new User(msg.from.id, msg.from.first_name, msg.from.username))
+    const user = userList[findUser(msg.from.id)]
+
+    switch (user.state) {
+        case 'gameCreation_name':
+            bot.sendMessage(user.id, `Ваша кампания называется "${msg.text}"`)
+            break
+        default:
+            bot.sendMessage(user.id, 'Что вы хотите сделать?', startOptions)
+    }
+
+
+})
+
+const startOptions = {
+    reply_markup: {
+        inline_keyboard: [
+            [{text: 'Список кампаний', callback_data: 'gameList'}],
+            [{text: 'Записаться в кампанию', callback_data: 'signUp'}],
+            [{text: 'Создать новую кампанию', callback_data: 'createGame'}],
+            [{text: 'Мои кампании', callback_data: 'myGames'}],
+        ]
+    }
+}
+
+bot.on('callback_query', (msg) => {
+    const user = userList[findUser(msg.from.id)]
+    switch (msg.data) {
+        case 'createGame':
+            gameCreation(user)
+            break
+        case 'signUp':
+            break
+    }
+})
+
+const gameCreation = (user: User) => {
+    bot.sendMessage(user.id, 'Введите название игры')
+        .then(user.state = 'gameCreation_name')
+}
+
+// TODO: move
+
+
 type Game = {
     id: number,
     name: string,
@@ -20,32 +87,4 @@ type Player = {
     class: string | undefined,
 }
 
-const startOptions = {
-    reply_markup: {
-        inline_keyboard: [
-            [{text: 'Создать новую кампанию', callback_data: 'createGame'}],
-            [{text: 'Записаться в кампанию', callback_data: 'signUp'}],
-            [{text: 'Редактировать кампанию', callback_data: 'editGame'}],
-            [{text: 'Удалить кампанию', callback_data: 'deleteGame'}]
-        ]
-    }
-}
 
-bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, 'Что вы хотите сделать?', startOptions)
-})
-
-bot.on('callback_query', (msg) => {
-    bot.sendMessage(msg.from.id, msg.data)
-    switch (msg.data) {
-        case 'createGame':
-            gameCreation(msg.from.id)
-            break
-        case 'signUp':
-            break
-    }
-})
-
-const gameCreation = (chatId) => {
-    bot.sendMessage(chatId, 'Введите название игры')
-}
