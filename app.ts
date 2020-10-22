@@ -19,16 +19,10 @@ class User {
 
 const userList: Array<User> = [];
 
-const findUser = (id) => {
-    for (let i = 0; i < userList.length; i++) {
-        if (userList[i].id === id) return i
-    }
-    return undefined;
-}
-
 bot.on("text", (msg) => {
-    !findUser(msg.from.id) && userList.push(new User(msg.from.id, msg.from.first_name, msg.from.username))
-    const user = userList[findUser(msg.from.id)]
+    !userList.find(i => i.id === msg.from.id)
+    && userList.push(new User(msg.from.id, msg.from.first_name, msg.from.username))
+    const user = userList.find(i => i.id === msg.from.id)
 
     switch (user.state) {
         case 'gameCreation_name':
@@ -53,7 +47,7 @@ const startOptions = {
 }
 
 bot.on('callback_query', (msg) => {
-    const user = userList[findUser(msg.from.id)]
+    const user = userList.find(i => i.id === msg.from.id)
     switch (msg.data) {
         case 'createGame':
             gameCreation(user)
