@@ -7,7 +7,7 @@ export type UserState = { // refactor to class?
 }
 
 export type UserData = {
-    gameCreation: {
+    game: {
         [P in keyof Game]?: Game[P];
     }
 }
@@ -23,7 +23,7 @@ export class User {
     public username: string
     private position: UserState = defaultUserState
     public data: UserData = {
-        gameCreation: {}
+        game: {}
     } // change to default constant
 
     constructor(id, name, username) {

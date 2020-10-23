@@ -10,7 +10,7 @@ export const defaultState: State = {
 
 export const gameCreationState: State = {
     name: 'gameCreation',
-    stages: ['default', 'name', 'level']
+    stages: ['default', 'name', 'level', 'setting']
 };
 
 

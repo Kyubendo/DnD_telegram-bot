@@ -46,7 +46,21 @@ const gameCreation = (user: User, msg: Message) => {
             bot.sendMessage(user.id, 'Введите название кампании').then(user.stateUp())
             break
         case 'name':
-            bot.sendMessage(user.id, `Ваша кампания называется ${msg.text}`)
+            msg.text && bot.sendMessage(user.id, `Ваша кампания называется "${msg.text}".`)
+                .then(() => { // extract to function
+                    user.data.game.name = msg.text
+                    user.stateUp()
+                    bot.sendMessage(user.id, `Для игроков какого уровня предназначена кампания?`)
+                })
             break
+        case 'level':
+            +msg.text in Array.from({length: 20}, (_, i) => ++i)
+                ? bot.sendMessage(user.id, `Хорошо, игроки будут ${+msg.text}-го уровня.`)
+                    .then(()=>{
+                        user.data.game.level = +msg.text
+                        user.stateUp()
+                        bot.sendMessage(user.id, `В каком сеттинге будет проходить кампания?`)
+                    })
+                : bot.sendMessage(user.id, `Такого уровня не существует!`)
     }
 }
