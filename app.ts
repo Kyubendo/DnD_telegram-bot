@@ -1,19 +1,62 @@
+import {Message, MessageType} from "node-telegram-bot-api";
+
 require('dotenv').config()
 const TelegramBot = require('node-telegram-bot-api')
 
 const token = process.env.TOKEN
 const bot = new TelegramBot(token, {polling: true})
 
+type State = {
+    name: string,
+    stages: Array<string>,
+}
+
+const gameCreationState: State = {
+    name: 'gameCreation',
+    stages: ['default', 'name', 'level']
+};
+
+
+type UserState = {
+    state: State;
+    stage: number;
+} | undefined
+
 class User {
     public id: string | number;
     public name: string;
     public username: string;
-    public state: string = null;
+    private position: UserState= {
+        state: {name:'d', stages:['s']},
+        stage: 0
+    }; // TODO: Rename
+    public data: UserData = {
+        gameCreation: {}
+    }
 
     constructor(id, name, username) {
         this.id = id
         this.name = name
         this.username = username;
+    }
+
+    get currentState() {
+        return this.position.state.name
+    }
+
+    get currentStage() {
+        return this.position.state.stages[this.position.stage]
+    }
+
+    set newState(state: State) {
+        this.position = {
+            state: state,
+            stage: 0,
+        }
+    }
+
+    stateUp = () => {
+        this.position.stage += 1
     }
 }
 
@@ -24,16 +67,20 @@ bot.on("text", (msg) => {
     && userList.push(new User(msg.from.id, msg.from.first_name, msg.from.username))
     const user = userList.find(i => i.id === msg.from.id)
 
-    switch (user.state) {
-        case 'gameCreation_name':
-            bot.sendMessage(user.id, `Ваша кампания называется "${msg.text}"`)
+    mainSwitch(user, msg)
+
+})
+
+const mainSwitch = (user: User, msg: Message) => {
+    console.log(user.currentState)
+    switch (user.currentState) {
+        case 'gameCreation':
+            gameCreation(user, msg)
             break
         default:
             bot.sendMessage(user.id, 'Что вы хотите сделать?', startOptions)
     }
-
-
-})
+}
 
 const startOptions = {
     reply_markup: {
@@ -50,16 +97,23 @@ bot.on('callback_query', (msg) => {
     const user = userList.find(i => i.id === msg.from.id)
     switch (msg.data) {
         case 'createGame':
-            gameCreation(user)
+            user.newState = gameCreationState
+            mainSwitch(user, msg)
             break
         case 'signUp':
             break
     }
 })
 
-const gameCreation = (user: User) => {
-    bot.sendMessage(user.id, 'Введите название игры')
-        .then(user.state = 'gameCreation_name')
+const gameCreation = (user: User, msg: Message) => {
+    switch (user.currentStage) {
+        case 'default':
+            bot.sendMessage(user.id, 'Введите название кампании').then(user.stateUp())
+            break
+        case 'name':
+            bot.sendMessage(user.id, `Ваша кампания называется ${msg.text}`)
+            break
+    }
 }
 
 // TODO: move
@@ -81,4 +135,9 @@ type Player = {
     class: string | undefined,
 }
 
+type UserData = {
+    gameCreation: {
+        [P in keyof Game]?: Game[P];
+    }
+}
 
