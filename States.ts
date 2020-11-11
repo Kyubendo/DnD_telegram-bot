@@ -1,16 +1,20 @@
-export type State = {
+export type QuestionState = {
     name: string,
-    stages: Array<string>,
+    stages: Array<{ stage: string, message: string, errorMessage?: string }>,
 }
 
-export const defaultState: State = {
+export const defaultState: QuestionState = {
     name: 'default',
-    stages: ['default']
+    stages: [{stage: 'default', message: 'default'}], // ??
 };
 
-export const gameCreationState: State = {
+export const gameCreationState: QuestionState = {
     name: 'gameCreation',
-    stages: ['default', 'name', 'level', 'setting']
+    stages: [
+        {stage: 'name', message: 'Введите название кампании'},
+        {stage: 'level', message: 'Для игроков какого уровня предназначена кампания?'},
+        {stage: 'setting', message: 'В каком сеттинге будет проходить кампания?'},
+        {stage: 'end', message: 'gameCreationState end stage'},
+    ]
 };
-
 

@@ -1,8 +1,8 @@
-import {defaultState, State} from "./States";
+import {defaultState, QuestionState} from "./States";
 import {Game} from "./Game";
 
 export type UserState = { // refactor to class?
-    state: State
+    state: QuestionState
     stage: number
 }
 
@@ -40,7 +40,15 @@ export class User {
         return this.position.state.stages[this.position.stage]
     }
 
-    set newState(state: State) {
+    get nextStage() {
+        return this.position.state.stages[this.position.stage + 1]
+    }
+
+    get previousStage() {
+        return this.position.state.stages[this.position.stage - 1]
+    }
+
+    set newState(state: QuestionState) {
         this.position = {
             state: state,
             stage: 0,
