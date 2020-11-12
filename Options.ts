@@ -3,7 +3,7 @@ export const startOptions = {
         inline_keyboard: [
             [{text: 'Список кампаний', callback_data: 'gameList'}],
             [{text: 'Записаться в кампанию', callback_data: 'signUp'}],
-            [{text: 'Создать новую кампанию', callback_data: 'createGame'}],
+            [{text: 'Создать новую кампанию', callback_data: 'gameCreation'}],
             [{text: 'Мои кампании', callback_data: 'myGames'}],
         ]
     }

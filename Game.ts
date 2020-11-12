@@ -1,3 +1,5 @@
+import {Player} from "./Player";
+
 export type Game = {
     id: number,
     name: string,
@@ -7,12 +9,3 @@ export type Game = {
     playersNumber: number,
     players: Array<Player>
 }
-
-export type Player = {
-    name: string,
-    alias: string,
-    class: string | undefined,
-}
-
-
-

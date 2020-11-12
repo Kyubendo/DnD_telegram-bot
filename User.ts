@@ -1,5 +1,6 @@
 import {defaultState, QuestionState} from "./States";
 import {Game} from "./Game";
+import {Player} from "./Player";
 
 export type UserState = { // refactor to class?
     state: QuestionState
@@ -7,8 +8,11 @@ export type UserState = { // refactor to class?
 }
 
 export type UserData = {
-    game: {
+    gameCreation: {
         [P in keyof Game]?: Game[P];
+    }
+    singUp: {
+        [P in keyof Player]?: Player[P];
     }
 }
 
@@ -23,7 +27,8 @@ export class User {
     public username: string
     private position: UserState = defaultUserState
     public data: UserData = {
-        game: {}
+        gameCreation: {},
+        singUp: {},
     } // change to default constant
 
     constructor(id, name, username) {
@@ -53,6 +58,10 @@ export class User {
             state: state,
             stage: 0,
         }
+    }
+
+    resetState(){
+        this.newState = defaultState
     }
 
     stateUp = () => {

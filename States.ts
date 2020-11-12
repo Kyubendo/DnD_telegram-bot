@@ -14,7 +14,17 @@ export const gameCreationState: QuestionState = {
         {stage: 'name', message: 'Введите название кампании'},
         {stage: 'level', message: 'Для игроков какого уровня предназначена кампания?'},
         {stage: 'setting', message: 'В каком сеттинге будет проходить кампания?'},
+        {stage: 'time', message: 'Время?'},
+        {stage: 'playersNumber', message: 'На сколько игроков расчитана кампания?'},
         {stage: 'end', message: 'gameCreationState end stage'},
     ]
 };
 
+export const singUpState: QuestionState = {
+    name: 'singUp',
+    stages: [
+        {stage: 'class', message: 'За какой класс будете играть?'},
+        {stage: 'race', message: 'Раса?'},
+        {stage: 'end', message: 'gameCreationState end stage'},
+    ]
+};
