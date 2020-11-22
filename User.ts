@@ -60,7 +60,7 @@ export class User {
         }
     }
 
-    resetState(){
+    resetState() {
         this.newState = defaultState
     }
 
