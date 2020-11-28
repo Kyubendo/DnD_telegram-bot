@@ -65,7 +65,10 @@ export class User {
     }
 
     stateUp = () => {
-        this.position.state.stages[this.position.stage + 1] ? this.position.stage += 1 : console.log('error')
+        this.position.state.stages[this.position.stage + 1] ? this.position.stage += 1 : console.log('error12')
+    }
+    stateDown = () => {
+        this.position.state.stages[this.position.stage - 1] ? this.position.stage -= 1 : console.log('error13')
     }
 }
 

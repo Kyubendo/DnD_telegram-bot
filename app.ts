@@ -30,7 +30,7 @@ db.run(`
         id         integer primary key,
         name       varchar(32) not null,
         alias      varchar(32),
-        telegramId bigint      not null
+        telegramId bigint      not null --primary key?
     )`)
 db.run(`
     create table if not exists player
@@ -42,7 +42,7 @@ db.run(`
         primary key (userId, gameId)
     )`)
 db.run(`
-    create table if not exists gm
+    create table if not exists gm --is it needed?
     (
         id     integer primary key,
         userId integer references "user" (id)
@@ -67,8 +67,9 @@ const mainSwitch = (user: User, msg: Message) => { //rename
 
 }
 
-const gameListQueryToMessage = (queryResult: Array<Game>) =>
-    queryResult.map(i => `
+const gameListQueryToMessage = (queryResult: Array<Game>) => {
+    if (!queryResult.length) return 'Активных игр на данный момент нет.'
+    return queryResult.map(i => `
 **${i.name}**
 Уровень ${i.level} ()
 Сеттинг: ${i.setting}
@@ -76,6 +77,7 @@ const gameListQueryToMessage = (queryResult: Array<Game>) =>
 ГМ: ${i.gm}
 Игроки:
 `).join('')
+}
 
 
 bot.on('callback_query', (msg) => { // link with state
@@ -98,7 +100,14 @@ bot.on('callback_query', (msg) => { // link with state
 })
 
 const create = (user: User, msg: Message) => { // rename
-    if (user.previousStage) user.data[user.currentState][user.previousStage.stage] = msg.text
+console.log(user.currentStage)
+    if (user.previousStage)
+        if (!user.previousStage.validation || user.previousStage.validation(msg.text))
+            user.data[user.currentState][user.previousStage.stage] = msg.text
+        else {
+            bot.sendMessage(user.id, user.previousStage.errorMessage)
+            return
+        }
     user.currentStage.stage !== 'end' ? bot.sendMessage(user.id, user.currentStage.message)
             .then(() => user.stateUp())
         : bot.sendMessage(user.id, 'Готово!')

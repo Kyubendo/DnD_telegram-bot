@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/moment": "^2.13.0",
     "@types/node-telegram-bot-api": "^0.50.4",
     "@types/sqlite3": "^3.1.6",
+    "moment": "^2.29.1",
     "node-telegram-bot-api": "^0.50.0",
     "sqlite3": "^5.0.0",
     "ts-node": "^9.0.0",
